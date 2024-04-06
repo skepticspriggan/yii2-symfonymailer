@@ -229,7 +229,7 @@ class Message extends BaseMessage implements MessageWrapperInterface
 
     public function getTextBody(): string
     {
-        return $this->email->textBody ?? '';
+        return $this->email->getTextBody() ?? '';
     }
 
     public function setHtmlBody($html): self
@@ -240,7 +240,7 @@ class Message extends BaseMessage implements MessageWrapperInterface
 
     public function getHtmlBody(): string
     {
-        return $this->email->htmlBody ?? '';
+        return $this->email->getHtmlBody() ?? '';
     }
 
     /**
