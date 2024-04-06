@@ -227,10 +227,20 @@ class Message extends BaseMessage implements MessageWrapperInterface
         return $this;
     }
 
+    public function getTextBody(): string
+    {
+        return $this->email->textBody ?? '';
+    }
+
     public function setHtmlBody($html): self
     {
         $this->email->html($html, $this->charset);
         return $this;
+    }
+
+    public function getHtmlBody(): string
+    {
+        return $this->email->htmlBody ?? '';
     }
 
     /**
