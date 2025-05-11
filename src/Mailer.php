@@ -180,4 +180,39 @@ class Mailer extends BaseMailer
         $this->getTransport()->send($message);
         return true;
     }
+
+    public function send($message)
+    {
+        if (!$this->beforeSend($message)) {
+            return false;
+        }
+
+        $address = $message->getTo();
+        if (is_array($address)) {
+            $address = implode(', ', array_keys($address));
+        }
+        Yii::info('Sending email "' . $message->getSubject() . '" to "' . $address . '"', __METHOD__);
+
+        if ($this->useFileTransport) {
+            $isSuccessful = $this->saveMessage($message);
+        } else {
+            try {
+                $isSuccessful = $this->sendMessage($message);
+            } catch (\Throwable $exception) {
+                $isSuccessful = false;
+                $error = $exception->getMessage();
+                Yii::error($exception->getMessage(), __METHOD__);
+            }
+        }
+
+        $this->afterSend($message, $isSuccessful, $error ?? null);
+
+        return $isSuccessful;
+    }
+
+    public function afterSend($message, $isSuccessful, $error = null)
+    {
+        $event = new CustomMailEvent(['message' => $message, 'isSuccessful' => $isSuccessful, 'error' => $error]);
+        $this->trigger(self::EVENT_AFTER_SEND, $event);
+    }
 }
